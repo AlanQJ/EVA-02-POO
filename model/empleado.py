@@ -9,17 +9,17 @@ class Empleado:
         self.fecha_ingreso = fecha_ingreso
         self.salario = salario
 
-    def validar_tabla_empleado(self):
-        consulta_sql = """
+def validar_tabla_empleado(self):
+    consulta_sql = """
             create table if not exists empleados(
-                id_empleado number generated always as identity (start with  1 increment by 1) primary key,
+            id_empleado number generated always as identity (start with  1 increment by 1) primary key,
             nombre varchar2(100) not null,
             direccion varchar2(200) not null,
             telefono varchar2(20) not null,
             email varchar2(100),
             fecha_ingreso date not null,
             salario number(10, 2) not null
-        );
+        )
     """
 
     conn = None
