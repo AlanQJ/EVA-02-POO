@@ -47,7 +47,7 @@ class Empleado:
                 cursor = conn.cursor()
                 cursor.execute(update_sql, (nuevo_salario, self._id_empleado))
                 if cursor.rowcount == 0:
-                    print("[WARNING] No se encontró un empleado con ese ID")
+                    print("[ADVERTENCIA] No se encontró un empleado con ese ID")
                     return False
                 conn.commit()
                 self.__salario_cifrado = nuevo_salario
@@ -71,7 +71,7 @@ class Empleado:
 
     def iniciar_sesion(self, email: str, clave: str) -> bool:
         if not email or not clave:
-            print("[WARNING] Debe ingresar email y contraseña")
+            print("[ADVERTENCIA] Debe ingresar email y contraseña")
             return False
 
         select_sql = """
@@ -103,7 +103,7 @@ class Empleado:
                     self._id_depto = fila[7]
                     print("[INFO] Sesión iniciada correctamente")
                     return True
-                print("[WARNING] Email o contraseña incorrectos")
+                print("[ADVERTENCIA] Email o contraseña incorrectos")
                 return False
             return False
         except Exception as e:
@@ -117,11 +117,11 @@ class Empleado:
 
     def cambiar_contrasena(self, nueva_clave: str) -> bool:
         if not isinstance(nueva_clave, str) or len(nueva_clave) < 6:
-            print("[WARNING] La nueva contraseña debe ser un texto de al menos 6 caracteres")
+            print("[ADVERTENCIA] La nueva contraseña debe ser un texto de al menos 6 caracteres")
             return False
 
         if not self._id_empleado:
-            print("[WARNING] El empleado aún no está registrado en la base de datos")
+            print("[ADVERTENCIA] El empleado aún no está registrado en la base de datos")
             return False
 
         update_sql = """
@@ -139,7 +139,7 @@ class Empleado:
                 cursor = conn.cursor()
                 cursor.execute(update_sql, (nuevo_hash, self._id_empleado))
                 if cursor.rowcount == 0:
-                    print("[WARNING] No se encontró un empleado con ese ID")
+                    print("[ADVERTENCIA] No se encontró un empleado con ese ID")
                     return False
                 conn.commit()
                 self.__contrasena_hash = nuevo_hash
@@ -230,7 +230,7 @@ def insertar_datos_empleado(emp: Empleado) -> bool:
         error = e.args[0]
 
         if error.code == 1:
-            print("[WARNING] El empleado ya está registrado (email duplicado)") # ORA-00001 (constraint uq_empleado_email)
+            print("[ADVERTENCIA] El empleado ya está registrado (email duplicado)") # ORA-00001 (constraint uq_empleado_email)
         else:
             print(f"[ERROR] Error de integridad | {e}")
         return False
@@ -275,7 +275,7 @@ def buscar_empleado_por_id(id_empleado: int):
             if fila:
                 return _fila_a_empleado(fila)
 
-            print("[WARNING] No se encontró un empleado con ese ID")
+            print("[ADVERTENCIA] No se encontró un empleado con ese ID")
         return None
     except Exception as e:
         print(f"[ERROR] No se pudo buscar el empleado | {e}")
@@ -325,7 +325,7 @@ def bd_actualizar_datos_empleado(emp: Empleado) -> bool:
     cursor = None
 
     if not emp._id_empleado:
-        print("[WARNING] El empleado aún no está registrado en la base de datos")
+        print("[ADVERTENCIA] El empleado aún no está registrado en la base de datos")
         return False
 
     try:
@@ -336,7 +336,7 @@ def bd_actualizar_datos_empleado(emp: Empleado) -> bool:
             cursor.execute(consulta_update, (emp._nombre, emp._direccion, emp._telefono, emp._email,
                                              emp._fecha_inicio_contrato, emp._id_depto, emp._id_empleado))
             if cursor.rowcount == 0:
-                print("[WARNING] No se encontró un empleado con ese ID")
+                print("[ADVERTENCIA] No se encontró un empleado con ese ID")
                 return False
             conn.commit()
 
@@ -350,7 +350,7 @@ def bd_actualizar_datos_empleado(emp: Empleado) -> bool:
         error = e.args[0]
 
         if error.code == 1:
-            print("[WARNING] Ya existe otro empleado con ese email") # ORA-00001 (constraint uq_empleado_email)
+            print("[ADVERTENCIA] Ya existe otro empleado con ese email") # ORA-00001 (constraint uq_empleado_email)
         else:
             print(f"[ERROR] Error de integridad | {e}")
         return False
@@ -379,7 +379,7 @@ def bd_eliminar_empleado(id_empleado: int) -> bool:
             cursor = conn.cursor()
             cursor.execute(consulta_delete, (id_empleado,))
             if cursor.rowcount == 0:
-                print("[WARNING] No se encontró un empleado con ese ID")
+                print("[ADVERTENCIA] No se encontró un empleado con ese ID")
                 return False
             conn.commit()
 
