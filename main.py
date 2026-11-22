@@ -1,7 +1,11 @@
-# from datetime import date
-# from model.empleado import Empleado, insertar_datos_empleado, listar_empleados, buscar_empleado_por_id
-# from model.administrador import Administrador, insertar_datos_administrador
-# from model.proyecto import Proyecto
+from datetime import date
+from model.empleado import Empleado, insertar_datos_empleado, listar_empleados, buscar_empleado_por_id
+from model.administrador import Administrador, insertar_datos_administrador
+from model.proyecto import Proyecto
+from servicios_api.api_clima import obtener_clima_proyecto, convertir_divisa_pago
+
+print(obtener_clima_proyecto('Puerto Montt'))
+print(convertir_divisa_pago(1000, 'CLP'))
 
 # empleado_1 = Empleado('Camila Soto', 'Av. Alemania 450', '987654321', 'camila.soto@ecotech.cl', date(2026, 3, 15), 1250000, 'claveSegura123', 1)
 # insertar_datos_empleado(empleado_1)
@@ -42,13 +46,14 @@
 # for emp in listar_empleados():
 #     print(emp.mostrar_datos())
 
-from model.empleado import buscar_empleado_por_id
-from model.proyecto import buscar_proyecto_por_id
+# from model.empleado import buscar_empleado_por_id
+# from model.proyecto import buscar_proyecto_por_id
 
-emp_1 = buscar_empleado_por_id(1)
-emp_2 = buscar_empleado_por_id(4)
-proyecto_1 = buscar_proyecto_por_id(1)
+# emp_1 = buscar_empleado_por_id(1)
+# emp_2 = buscar_empleado_por_id(4)
+# proyecto_1 = buscar_proyecto_por_id(1)
 
-if proyecto_1 and emp_1 and emp_2:
-    proyecto_1.asignar_empleado(emp_1)
-    proyecto_1.asignar_empleado(emp_2)
+# if proyecto_1 and emp_1 and emp_2:
+#     proyecto_1.asignar_empleado(emp_1)
+#     proyecto_1.asignar_empleado(emp_2)
+
