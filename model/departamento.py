@@ -10,7 +10,7 @@ class Departamento:
         self.__lista_empleados = []
 
     # metodos
-    def crear_depto(self) -> bool:
+    def crear_depto(self):
         if not isinstance(self.__nombre, str) or not self.__nombre.strip():
             print("[ADVERTENCIA] El departamento debe tener un nombre")
             return False
@@ -75,7 +75,7 @@ class Departamento:
             if conn:
                 conn.close()
 
-    def editar_depto(self, nuevo_nombre: str) -> bool:
+    def editar_depto(self, nuevo_nombre: str):
         if not isinstance(nuevo_nombre, str) or not nuevo_nombre.strip():
             print("[ADVERTENCIA] El nuevo nombre debe ser un texto no vacío")
             return False
@@ -126,7 +126,7 @@ class Departamento:
             if conn:
                 conn.close()
 
-    def eliminar_depto(self) -> bool:
+    def eliminar_depto(self):
         if not self.__id_depto:
             print("[ADVERTENCIA] El departamento aún no está registrado en la base de datos")
             return False
@@ -170,7 +170,7 @@ class Departamento:
             if conn:
                 conn.close()
 
-    def buscar_depto(self, nombre: str) -> "Departamento":
+    def buscar_depto(self, nombre: str):
         if not isinstance(nombre, str) or not nombre.strip():
             print("[ADVERTENCIA] Debe ingresar el nombre del departamento a buscar")
             return None
@@ -206,7 +206,7 @@ class Departamento:
         encontrado.__lista_empleados = [emp for emp in listar_empleados() if emp._id_depto == fila[0]]
         return encontrado
 
-    def asignar_gerente(self, emp: Empleado) -> None:
+    def asignar_gerente(self, emp: Empleado):
         if not isinstance(emp, Empleado) or not emp._id_empleado:
             print("[ADVERTENCIA] El empleado no es válido o aún no está registrado en la base de datos")
             return
@@ -255,7 +255,7 @@ class Departamento:
             if conn:
                 conn.close()
 
-    def asignar_empleado(self, emp: Empleado) -> bool:
+    def asignar_empleado(self, emp: Empleado):
         if not isinstance(emp, Empleado) or not emp._id_empleado:
             print("[ADVERTENCIA] El empleado no es válido o aún no está registrado en la base de datos")
             return False
@@ -306,7 +306,7 @@ class Departamento:
             if conn:
                 conn.close()
 
-    def reasignar_empleado(self, emp: Empleado) -> bool:
+    def reasignar_empleado(self, emp: Empleado):
         if not isinstance(emp, Empleado) or not emp._id_empleado:
             print("[ADVERTENCIA] El empleado no es válido o aún no está registrado en la base de datos")
             return False

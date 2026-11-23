@@ -17,7 +17,7 @@ class Administrador(Empleado):
         self.__area_rrhh = area_rrhh
 
     # metodos
-    def registrar_empleado(self, emp: Empleado) -> bool:
+    def registrar_empleado(self, emp: Empleado):
         if not self.verificar_permiso_modulo("empleados"):
             return False
 
@@ -45,7 +45,7 @@ class Administrador(Empleado):
 
         return insertar_datos_empleado(emp)
 
-    def validar_entrada_datos(self, texto: str) -> bool:
+    def validar_entrada_datos(self, texto: str):
         # La protección real contra inyección sql son los parámetros (:1, :2...), esto es un filtro adicional
         if not isinstance(texto, str) or not texto.strip():
             print("[ADVERTENCIA] El dato ingresado debe ser un texto no vacío")
@@ -67,7 +67,7 @@ class Administrador(Empleado):
 
         return True
 
-    def verificar_permiso_modulo(self, modulo: str) -> bool:
+    def verificar_permiso_modulo(self, modulo: str):
         if not isinstance(modulo, str) or not modulo.strip():
             print("[ADVERTENCIA] Debe indicar el módulo a verificar")
             return False
@@ -80,7 +80,7 @@ class Administrador(Empleado):
         print(f"[ADVERTENCIA] El nivel de acceso '{self.__nivel_acceso}' no tiene permiso para el módulo '{modulo}'")
         return False
 
-    def solicitar_reporte(self, tipo: str, formato: str) -> bool:
+    def solicitar_reporte(self, tipo: str, formato: str):
         if not self.verificar_permiso_modulo("reportes"):
             return False
 
@@ -146,7 +146,7 @@ def validar_tabla_administrador():
         if conn:
             conn.close()
 
-def insertar_datos_administrador(admin: Administrador) -> bool:
+def insertar_datos_administrador(admin: Administrador):
     # Los atributos privados se leen con el nombre que Python les asigna (_Administrador__atributo)
     nivel_acceso = admin._Administrador__nivel_acceso
     area_rrhh = admin._Administrador__area_rrhh
@@ -195,7 +195,7 @@ def insertar_datos_administrador(admin: Administrador) -> bool:
 
     return registrado
 
-def _fila_a_administrador(fila) -> Administrador:
+def _fila_a_administrador(fila):
     # Igual que en empleado: salario y contraseña son hash, se crean con valores de relleno y luego se reemplazan
     admin = Administrador(fila[1], fila[2], fila[3], fila[4], fila[5].date(), 0, "", fila[8], fila[9], fila[10], fila[0])
     admin._Empleado__salario_cifrado = fila[6]
@@ -205,7 +205,7 @@ def _fila_a_administrador(fila) -> Administrador:
 def buscar_administrador_por_id(id_empleado: int):
     consulta_select = """
         select e.id_empleado, e.nombre, e.direccion, e.telefono, e.email, e.fecha_inicio_contrato,
-               e.salario_cifrado, e.contrasena_hash, e.id_depto, a.nivel_acceso, a.area_rrhh
+        e.salario_cifrado, e.contrasena_hash, e.id_depto, a.nivel_acceso, a.area_rrhh
         from empleados e
         join administradores a on a.id_empleado = e.id_empleado
         where e.id_empleado = :1
@@ -236,10 +236,10 @@ def buscar_administrador_por_id(id_empleado: int):
         if conn:
             conn.close()
 
-def listar_administradores() -> list:
+def listar_administradores():
     consulta_select = """
         select e.id_empleado, e.nombre, e.direccion, e.telefono, e.email, e.fecha_inicio_contrato,
-               e.salario_cifrado, e.contrasena_hash, e.id_depto, a.nivel_acceso, a.area_rrhh
+        e.salario_cifrado, e.contrasena_hash, e.id_depto, a.nivel_acceso, a.area_rrhh
         from empleados e
         join administradores a on a.id_empleado = e.id_empleado
         order by e.id_empleado
@@ -265,7 +265,7 @@ def listar_administradores() -> list:
         if conn:
             conn.close()
 
-def bd_actualizar_datos_administrador(admin: Administrador) -> bool:
+def bd_actualizar_datos_administrador(admin: Administrador):
     # Solo actualiza nivel_acceso y area_rrhh, los datos de empleado se actualizan con bd_actualizar_datos_empleado
     nivel_acceso = admin._Administrador__nivel_acceso
     area_rrhh = admin._Administrador__area_rrhh

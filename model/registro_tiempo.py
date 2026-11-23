@@ -15,7 +15,7 @@ class RegistroTiempo:
         self.empleado = empleado
         self.proyecto = proyecto
 
-    def registrar_horas(self) -> bool:
+    def registrar_horas(self):
         if self.idRegistro:
             print("[ADVERTENCIA] El registro ya está guardado en la base de datos")
             return False
@@ -95,7 +95,7 @@ class RegistroTiempo:
             if conn:
                 conn.close()
 
-    def editar_registro(self, nuevas_horas: float) -> bool:
+    def editar_registro(self, nuevas_horas: float):
         if not self.idRegistro:
             print("[ADVERTENCIA] El registro aún no está guardado en la base de datos")
             return False
@@ -135,7 +135,7 @@ class RegistroTiempo:
             if conn:
                 conn.close()
 
-    def validar_horas(self, horas: float) -> bool:
+    def validar_horas(self, horas: float):
         if not isinstance(horas, (int, float)) or isinstance(horas, bool) or horas <= 0:
             print("[ADVERTENCIA] Las horas deben ser un número mayor a 0")
             return False
@@ -260,7 +260,7 @@ def buscar_registro_por_id(id_registro: int, empleado: Empleado, proyecto: Proye
         if conn:
             conn.close()
 
-def bd_eliminar_registro(id_registro: int) -> bool:
+def bd_eliminar_registro(id_registro: int):
     consulta_delete = "delete from registros_tiempo where id_registro = :1"
     conn = None
     cursor = None

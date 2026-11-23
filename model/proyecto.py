@@ -12,7 +12,7 @@ class Proyecto:
         self.__empleados_asignados = []
 
     # metodos
-    def crear_proyecto(self) -> bool:
+    def crear_proyecto(self):
         if not isinstance(self.__nombre, str) or not self.__nombre.strip():
             print("[ADVERTENCIA] El proyecto debe tener un nombre")
             return False
@@ -68,7 +68,7 @@ class Proyecto:
             if conn:
                 conn.close()
 
-    def editar_proyecto(self, nueva_desc: str) -> bool:
+    def editar_proyecto(self, nueva_desc: str):
         if not isinstance(nueva_desc, str) or not nueva_desc.strip():
             print("[ADVERTENCIA] La nueva descripción debe ser un texto no vacío")
             return False
@@ -108,7 +108,7 @@ class Proyecto:
             if conn:
                 conn.close()
 
-    def eliminar_proyecto(self) -> bool:
+    def eliminar_proyecto(self):
         if not self.__id_proyecto:
             print("[ADVERTENCIA] El proyecto aún no está registrado en la base de datos")
             return False
@@ -146,7 +146,7 @@ class Proyecto:
             if conn:
                 conn.close()
 
-    def asignar_empleado(self, emp: Empleado) -> bool:
+    def asignar_empleado(self, emp: Empleado):
         if not isinstance(emp, Empleado) or not emp._id_empleado:
             print("[ADVERTENCIA] El empleado no es válido o aún no está registrado en la base de datos")
             return False
@@ -197,7 +197,7 @@ class Proyecto:
             if conn:
                 conn.close()
 
-    def desasignar_empleado(self, id_empleado: int) -> bool:
+    def desasignar_empleado(self, id_empleado: int):
         if not isinstance(id_empleado, int) or isinstance(id_empleado, bool): # bool es subclase de int, así True no pasa como el id 1
             print("[ADVERTENCIA] El id del empleado debe ser un número entero")
             return False
@@ -284,7 +284,7 @@ def validar_tabla_proyecto():
         if conn:
             conn.close()
 
-def _empleados_de_proyecto(id_proyecto: int) -> list:
+def _empleados_de_proyecto(id_proyecto: int):
     consulta_select = "select id_empleado from proyecto_empleados where id_proyecto = :1"
     conn = None
     cursor = None
@@ -314,7 +314,7 @@ def _empleados_de_proyecto(id_proyecto: int) -> list:
             empleados.append(emp)
     return empleados
 
-def _fila_a_proyecto(fila) -> Proyecto:
+def _fila_a_proyecto(fila):
     fecha = fila[3].date() if fila[3] else None # Si la fecha viene vacía en la bd, se evita el error de None.date()
     proyecto = Proyecto(fila[1], fila[2], fecha, fila[0])
     proyecto._Proyecto__empleados_asignados = _empleados_de_proyecto(fila[0])
@@ -349,7 +349,7 @@ def buscar_proyecto_por_id(id_proyecto: int):
 
     return _fila_a_proyecto(fila)
 
-def listar_proyectos() -> list:
+def listar_proyectos():
     consulta_select = "select id_proyecto, nombre, descripcion, fecha_inicio from proyectos order by id_proyecto"
     conn = None
     cursor = None

@@ -17,13 +17,13 @@ class Empleado:
         self.__contrasena_hash = self.cifrar_datos_sensibles(contrasena)
 
     # metodos
-    def mostrar_datos(self) -> str:
+    def mostrar_datos(self):
         return (f"ID: {self._id_empleado} | Nombre: {self._nombre} | Dirección: {self._direccion} | "
                 f"Teléfono: {self._telefono} | Email: {self._email} | "
                 f"Inicio de contrato: {self._fecha_inicio_contrato.strftime('%d-%m-%Y')} | "
                 f"Departamento: {self._id_depto}")
 
-    def actualizar_salario(self, nuevo_monto: float) -> bool:
+    def actualizar_salario(self, nuevo_monto: float):
         if not self._id_empleado:
             print("[WARNING] El empleado aún no está registrado en la base de datos")
             return False
@@ -65,11 +65,11 @@ class Empleado:
             if conn:
                 conn.close()
 
-    def cifrar_datos_sensibles(self, dato: str) -> str:
+    def cifrar_datos_sensibles(self, dato: str):
         """Convierte un dato sensible (contraseña o salario) en un hash seguro SHA-256"""
         return hashlib.sha256(str(dato).encode("utf-8")).hexdigest()
 
-    def iniciar_sesion(self, email: str, clave: str) -> bool:
+    def iniciar_sesion(self, email: str, clave: str):
         if not email or not clave:
             print("[ADVERTENCIA] Debe ingresar email y contraseña")
             return False
@@ -115,7 +115,7 @@ class Empleado:
             if conn:
                 conn.close()
 
-    def cambiar_contrasena(self, nueva_clave: str) -> bool:
+    def cambiar_contrasena(self, nueva_clave: str):
         if not isinstance(nueva_clave, str) or len(nueva_clave) < 6:
             print("[ADVERTENCIA] La nueva contraseña debe ser un texto de al menos 6 caracteres")
             return False
@@ -196,7 +196,7 @@ def validar_tabla_empleado():
         if conn:
             conn.close()
 
-def insertar_datos_empleado(emp: Empleado) -> bool:
+def insertar_datos_empleado(emp: Empleado):
     validar_tabla_empleado()
 
     consulta_insert = """
@@ -247,7 +247,7 @@ def insertar_datos_empleado(emp: Empleado) -> bool:
         if conn:
             conn.close()
 
-def _fila_a_empleado(fila) -> Empleado:
+def _fila_a_empleado(fila):
     # El salario y la contraseña no se pueden recuperar (son hash), por eso se crea el objeto con valores de relleno
     # y luego se reemplazan los hash reales que vienen de la bd
     emp = Empleado(fila[1], fila[2], fila[3], fila[4], fila[5].date(), 0, "", fila[8], fila[0])
@@ -287,7 +287,7 @@ def buscar_empleado_por_id(id_empleado: int):
         if conn:
             conn.close()
 
-def listar_empleados() -> list:
+def listar_empleados():
     consulta_select = """
         select id_empleado, nombre, direccion, telefono, email, fecha_inicio_contrato, salario_cifrado, contrasena_hash, id_depto
         from empleados
@@ -314,7 +314,7 @@ def listar_empleados() -> list:
         if conn:
             conn.close()
 
-def bd_actualizar_datos_empleado(emp: Empleado) -> bool:
+def bd_actualizar_datos_empleado(emp: Empleado):
     # El salario y la contraseña no se tocan aquí, para eso ya existen actualizar_salario y cambiar_contrasena
     consulta_update = """
         update empleados
@@ -334,7 +334,7 @@ def bd_actualizar_datos_empleado(emp: Empleado) -> bool:
         if conn:
             cursor = conn.cursor()
             cursor.execute(consulta_update, (emp._nombre, emp._direccion, emp._telefono, emp._email,
-                                             emp._fecha_inicio_contrato, emp._id_depto, emp._id_empleado))
+                                            emp._fecha_inicio_contrato, emp._id_depto, emp._id_empleado))
             if cursor.rowcount == 0:
                 print("[ADVERTENCIA] No se encontró un empleado con ese ID")
                 return False
@@ -367,7 +367,7 @@ def bd_actualizar_datos_empleado(emp: Empleado) -> bool:
         if conn:
             conn.close()
 
-def bd_eliminar_empleado(id_empleado: int) -> bool:
+def bd_eliminar_empleado(id_empleado: int):
     consulta_delete = "delete from empleados where id_empleado = :1"
     conn = None
     cursor = None

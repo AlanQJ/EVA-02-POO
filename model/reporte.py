@@ -17,14 +17,14 @@ class Reporte:
         self.__tipo_formato = str(tipo_formato).strip().lower()
 
     # metodos
-    def obtener_datos_sistema(self) -> list:
+    def obtener_datos_sistema(self):
         try:
             return [[emp._id_empleado, emp._nombre, emp._email, "" if emp._id_depto is None else emp._id_depto] for emp in listar_empleados()]
         except Exception as e:
             print(f"[ERROR] No se pudieron obtener los datos del sistema | {e}")
             return []
 
-    def generar_reporte_pdf(self, datos: list) -> bool:
+    def generar_reporte_pdf(self, datos: list):
         if not _validar_datos(datos):
             return False
 
@@ -42,7 +42,7 @@ class Reporte:
             print("[ADVERTENCIA] El reporte se generó, pero no quedó en el historial")
         return True
 
-    def generar_reporte_excel(self, datos: list) -> bool:
+    def generar_reporte_excel(self, datos: list):
         if not _validar_datos(datos):
             return False
 
@@ -67,13 +67,13 @@ class Reporte:
         return True
 
 
-def _validar_datos(datos) -> bool:
+def _validar_datos(datos):
     if not isinstance(datos, list) or not datos:
         print("[ADVERTENCIA] No hay datos para generar el reporte")
         return False
     return True
 
-def _crear_ruta(extension: str) -> str:
+def _crear_ruta(extension: str):
     os.makedirs(CARPETA_REPORTES, exist_ok=True)
     marca = datetime.now().strftime("%Y%m%d_%H%M%S")
     return os.path.join(CARPETA_REPORTES, f"reporte_{marca}.{extension}")
@@ -105,7 +105,7 @@ def validar_tabla_reporte():
         if conn:
             conn.close()
 
-def insertar_datos_reporte(reporte: Reporte) -> bool:
+def insertar_datos_reporte(reporte: Reporte):
     validar_tabla_reporte()
 
     consulta_insert = """
@@ -142,7 +142,7 @@ def insertar_datos_reporte(reporte: Reporte) -> bool:
         if conn:
             conn.close()
 
-def listar_reportes() -> list:
+def listar_reportes():
     consulta_select = "select id_reporte, fecha_emision, tipo_formato from reportes order by id_reporte desc"
     conn = None
     cursor = None
