@@ -65,7 +65,7 @@ class Empleado:
 
     def cifrar_datos_sensibles(self, dato: str) -> str:
         """Convierte un dato sensible (contraseña o salario) en un hash seguro SHA-256"""
-        return hashlib.sha256(str(dato).encode("utf-8")).hexdigest()
+        return hashlib.sha512(str(dato).encode("utf-8")).hexdigest()
 
     def iniciar_sesion(self, email: str, clave: str) -> bool:
         if not email or not clave:
