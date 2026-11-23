@@ -23,3 +23,6 @@ def conectar_db():
         print(f"Error al conectar a DB | {e}")
         traceback.print_exc()
         return None
+
+def obtener_api_key_clima() -> str:
+    return os.getenv("OPENWEATHER_API_KEY", "")

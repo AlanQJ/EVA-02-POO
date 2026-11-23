@@ -1,0 +1,45 @@
+[
+    {
+        "fecha": "22-11-2026 20:05:57",
+        "tipo": "divisas",
+        "entrada": {
+            "monto_usd": 1000,
+            "moneda": "CLP"
+        },
+        "resultado": {
+            "moneda_origen": "USD",
+            "moneda_destino": "CLP",
+            "tasa_cambio": 1014.084257,
+            "monto_original": 1000.0,
+            "monto_convertido": 1014084.26
+        }
+    },
+    {
+        "fecha": "22-11-2026 20:13:51",
+        "tipo": "clima",
+        "entrada": {
+            "ciudad": "Puerto Montt"
+        },
+        "resultado": {
+            "ciudad": "Port Montt",
+            "temperatura": 13.46,
+            "humedad": 94,
+            "descripcion": "Chubasco de ligera intensidad"
+        }
+    },
+    {
+        "fecha": "22-11-2026 20:13:52",
+        "tipo": "divisas",
+        "entrada": {
+            "monto_usd": 1000,
+            "moneda": "CLP"
+        },
+        "resultado": {
+            "moneda_origen": "USD",
+            "moneda_destino": "CLP",
+            "tasa_cambio": 1014.084257,
+            "monto_original": 1000.0,
+            "monto_convertido": 1014084.26
+        }
+    }
+]

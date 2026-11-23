@@ -1,18 +1,21 @@
-from .empleado import Empleado
-from .proyecto import Proyecto
 from datetime import date
-from config.app_config import conectar_db
+from config.app_config import conectar_db, oracledb
+from .empleado import Empleado, validar_tabla_empleado
+from .proyecto import Proyecto
+
+MAX_HORAS_DIA = 24 
 
 class RegistroTiempo:
+    # Atributos
     def __init__(self, idRegistro:int, fecha: date, horasTrabajadas:float, descripcionTareas:str, empleado:Empleado, proyecto:Proyecto):
-        self.idRegistro = idRegistro
+        self.idRegistro = idRegistro 
         self.fecha = fecha
         self.horasTrabajadas = horasTrabajadas
         self.descripcionTareas = descripcionTareas
         self.empleado = empleado
         self.proyecto = proyecto
 
-    def registrar_horas(self):
+    def registrar_horas(self) -> bool:
         if self.idRegistro:
             print("[ADVERTENCIA] El registro ya está guardado en la base de datos")
             return False
@@ -21,7 +24,7 @@ class RegistroTiempo:
             print("[ADVERTENCIA] El empleado debe estar registrado en la base de datos")
             return False
 
-        if not isinstance(self.proyecto, Proyecto) or not self.proyecto._id_proyecto:
+        if not isinstance(self.proyecto, Proyecto) or not self.proyecto._Proyecto__id_proyecto:
             print("[ADVERTENCIA] El proyecto debe estar registrado en la base de datos")
             return False
 
@@ -56,7 +59,12 @@ class RegistroTiempo:
             if conn:
                 cursor = conn.cursor()
                 id_generado = cursor.var(int)
-                cursor.execute(consulta_insert, (self.fecha, self.horasTrabajadas, self.descripcionTareas.strip(),self.empleado._id_empleado, self.proyecto._id_proyecto, id_generado))
+                cursor.execute(consulta_insert, (self.fecha, 
+                                                self.horasTrabajadas, 
+                                                self.descripcionTareas.strip(),
+                                                self.empleado._id_empleado, 
+                                                self.proyecto._Proyecto__id_proyecto, 
+                                                id_generado))
                 conn.commit()
                 self.idRegistro = id_generado.getvalue()[0]
 
@@ -70,7 +78,7 @@ class RegistroTiempo:
             error = e.args[0]
 
             if error.code == 2291:
-                print("[ADVERTENCIA] El empleado indicado no existe en la base de datos") # ORA-02291 (fk_registro_empleado)
+                print("[ADVERTENCIA] El empleado indicado no existe en la base de datos") 
             else:
                 print(f"[ERROR] Error de integridad | {e}")
             return False
@@ -87,12 +95,11 @@ class RegistroTiempo:
             if conn:
                 conn.close()
 
-    def editar_registro(self):
+    def editar_registro(self, nuevas_horas: float) -> bool:
         if not self.idRegistro:
             print("[ADVERTENCIA] El registro aún no está guardado en la base de datos")
             return False
 
-        # validar_horas ignora este mismo registro al sumar las horas del día, así que se puede corregir sin chocar consigo mismo
         if not self.validar_horas(nuevas_horas):
             return False
 
@@ -128,7 +135,7 @@ class RegistroTiempo:
             if conn:
                 conn.close()
 
-    def validar_horas():
+    def validar_horas(self, horas: float) -> bool:
         if not isinstance(horas, (int, float)) or isinstance(horas, bool) or horas <= 0:
             print("[ADVERTENCIA] Las horas deben ser un número mayor a 0")
             return False
@@ -141,7 +148,6 @@ class RegistroTiempo:
             print("[ADVERTENCIA] El empleado debe estar registrado en la base de datos")
             return False
 
-        # Se suman las horas que el empleado ya tiene ese día (sin contar este mismo registro, por si se está editando)
         consulta_select = """
             select nvl(sum(horas_trabajadas), 0)
             from registros_tiempo
@@ -169,7 +175,7 @@ class RegistroTiempo:
             error = e.args[0]
 
             if error.code == 942:
-                return True # ORA-00942: la tabla aún no existe, por lo tanto no hay horas previas que sumar
+                return True
             print(f"[ERROR] No se pudieron validar las horas | {e}")
             return False
         except Exception as e:
@@ -182,10 +188,106 @@ class RegistroTiempo:
             if conn:
                 conn.close()
 
-    def mostrar_detalle(self):
-        nombre_empleado = getattr(self.empleado, "_nombre", self.empleado._id_empleado)
-        nombre_proyecto = getattr(self.proyecto, "_nombre", self.proyecto._id_proyecto)
-
+    def mostrar_detalle(self) -> str:
         return (f"ID: {self.idRegistro} | Fecha: {self.fecha.strftime('%d-%m-%Y')} | "
-                f"Empleado: {nombre_empleado} | Proyecto: {nombre_proyecto} | "
+                f"Empleado: {self.empleado._nombre} | Proyecto: {self.proyecto._Proyecto__nombre} | "
                 f"Horas: {self.horasTrabajadas} | Tareas: {self.descripcionTareas}")
+
+
+def validar_tabla_registro_tiempo():
+    validar_tabla_empleado()
+
+    consulta_sql = """
+        create table if not exists registros_tiempo (
+            id_registro NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1) PRIMARY KEY,
+            fecha date not null,
+            horas_trabajadas number(4,2) not null,
+            descripcion_tareas varchar2(500),
+            id_empleado number not null,
+            id_proyecto number not null,
+            constraint ck_registro_horas check (horas_trabajadas > 0 and horas_trabajadas <= 24),
+            constraint fk_registro_empleado foreign key (id_empleado) references empleados(id_empleado)
+        )
+    """
+    conn = None
+    cursor = None
+
+    try:
+        conn = conectar_db()
+
+        if conn:
+            cursor = conn.cursor()
+            cursor.execute(consulta_sql)
+            print("[INFO] Tabla registros_tiempo creada correctamente")
+    except Exception as e:
+        print(f"[ERROR] Creación de tabla registros_tiempo | {e}")
+    finally:
+        if cursor:
+            cursor.close()
+
+        if conn:
+            conn.close()
+
+def buscar_registro_por_id(id_registro: int, empleado: Empleado, proyecto: Proyecto):
+    consulta_select = """
+        select id_registro, fecha, horas_trabajadas, descripcion_tareas
+        from registros_tiempo
+        where id_registro = :1 and id_empleado = :2 and id_proyecto = :3
+    """
+    conn = None
+    cursor = None
+
+    try:
+        conn = conectar_db()
+
+        if conn:
+            cursor = conn.cursor()
+            cursor.execute(consulta_select, (id_registro, empleado._id_empleado, proyecto._Proyecto__id_proyecto))
+            fila = cursor.fetchone()
+
+            if fila:
+                return RegistroTiempo(fila[0], fila[1].date(), float(fila[2]), fila[3], empleado, proyecto)
+
+            print("[ADVERTENCIA] No se encontró un registro con ese ID para ese empleado y proyecto")
+        return None
+    except Exception as e:
+        print(f"[ERROR] No se pudo buscar el registro | {e}")
+        return None
+    finally:
+        if cursor:
+            cursor.close()
+
+        if conn:
+            conn.close()
+
+def bd_eliminar_registro(id_registro: int) -> bool:
+    consulta_delete = "delete from registros_tiempo where id_registro = :1"
+    conn = None
+    cursor = None
+
+    try:
+        conn = conectar_db()
+
+        if conn:
+            cursor = conn.cursor()
+            cursor.execute(consulta_delete, (id_registro,))
+            if cursor.rowcount == 0:
+                print("[ADVERTENCIA] No se encontró un registro con ese ID")
+                return False
+            conn.commit()
+
+            print("[INFO] Registro eliminado correctamente")
+            return True
+        return False
+    except Exception as e:
+        if conn:
+            conn.rollback()
+
+        print(f"[ERROR] Registro no eliminado | {e}")
+        return False
+    finally:
+        if cursor:
+            cursor.close()
+
+        if conn:
+            conn.close()

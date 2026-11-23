@@ -14,15 +14,15 @@ class Proyecto:
     # metodos
     def crear_proyecto(self) -> bool:
         if not isinstance(self.__nombre, str) or not self.__nombre.strip():
-            print("[WARNING] El proyecto debe tener un nombre")
+            print("[ADVERTENCIA] El proyecto debe tener un nombre")
             return False
 
         if not isinstance(self.__fecha_inicio, date):
-            print("[WARNING] La fecha de inicio debe ser de tipo date")
+            print("[ADVERTENCIA] La fecha de inicio debe ser de tipo date")
             return False
 
         if self.__id_proyecto:
-            print("[WARNING] El proyecto ya está registrado en la base de datos")
+            print("[ADVERTENCIA] El proyecto ya está registrado en la base de datos")
             return False
 
         validar_tabla_proyecto()
@@ -53,7 +53,7 @@ class Proyecto:
             error = e.args[0]
 
             if error.code == 1:
-                print("[WARNING] El proyecto ya existe en la base de datos") # ORA-00001 (constraint uq_proyecto_nombre)
+                print("[ADVERTENCIA] El proyecto ya existe en la base de datos") # ORA-00001 (constraint uq_proyecto_nombre)
             else:
                 print(f"[ERROR] Error de integridad | {e}")
             return False
@@ -70,11 +70,11 @@ class Proyecto:
 
     def editar_proyecto(self, nueva_desc: str) -> bool:
         if not isinstance(nueva_desc, str) or not nueva_desc.strip():
-            print("[WARNING] La nueva descripción debe ser un texto no vacío")
+            print("[ADVERTENCIA] La nueva descripción debe ser un texto no vacío")
             return False
 
         if not self.__id_proyecto:
-            print("[WARNING] El proyecto aún no está registrado en la base de datos")
+            print("[ADVERTENCIA] El proyecto aún no está registrado en la base de datos")
             return False
 
         update_sql = """
@@ -90,7 +90,7 @@ class Proyecto:
                 cursor = conn.cursor()
                 cursor.execute(update_sql, (nueva_desc, self.__id_proyecto))
                 if cursor.rowcount == 0:
-                    print("[WARNING] No se encontró el proyecto")
+                    print("[ADVERTENCIA] No se encontró el proyecto")
                     return False
                 conn.commit()
                 self.__descripcion = nueva_desc
@@ -110,7 +110,7 @@ class Proyecto:
 
     def eliminar_proyecto(self) -> bool:
         if not self.__id_proyecto:
-            print("[WARNING] El proyecto aún no está registrado en la base de datos")
+            print("[ADVERTENCIA] El proyecto aún no está registrado en la base de datos")
             return False
 
         # Las asignaciones de proyecto_empleados se borran solas (on delete cascade)
@@ -127,7 +127,7 @@ class Proyecto:
                 cursor = conn.cursor()
                 cursor.execute(delete_sql, (self.__id_proyecto,))
                 if cursor.rowcount == 0:
-                    print("[WARNING] No se encontró el proyecto")
+                    print("[ADVERTENCIA] No se encontró el proyecto")
                     return False
                 conn.commit()
                 self.__empleados_asignados.clear()
@@ -148,11 +148,11 @@ class Proyecto:
 
     def asignar_empleado(self, emp: Empleado) -> bool:
         if not isinstance(emp, Empleado) or not emp._id_empleado:
-            print("[WARNING] El empleado no es válido o aún no está registrado en la base de datos")
+            print("[ADVERTENCIA] El empleado no es válido o aún no está registrado en la base de datos")
             return False
 
         if not self.__id_proyecto:
-            print("[WARNING] El proyecto aún no está registrado en la base de datos")
+            print("[ADVERTENCIA] El proyecto aún no está registrado en la base de datos")
             return False
 
         insert_sql = """
@@ -180,7 +180,7 @@ class Proyecto:
             error = e.args[0]
 
             if error.code == 1:
-                print("[WARNING] El empleado ya está asignado a este proyecto") # ORA-00001 (llave primaria de proyecto_empleados)
+                print("[ADVERTENCIA] El empleado ya está asignado a este proyecto") # ORA-00001 (llave primaria de proyecto_empleados)
             elif error.code == 2291:
                 print("[ERROR] El proyecto o el empleado no existe en la base de datos")
             else:
@@ -199,11 +199,11 @@ class Proyecto:
 
     def desasignar_empleado(self, id_empleado: int) -> bool:
         if not isinstance(id_empleado, int) or isinstance(id_empleado, bool): # bool es subclase de int, así True no pasa como el id 1
-            print("[WARNING] El id del empleado debe ser un número entero")
+            print("[ADVERTENCIA] El id del empleado debe ser un número entero")
             return False
 
         if not self.__id_proyecto:
-            print("[WARNING] El proyecto aún no está registrado en la base de datos")
+            print("[ADVERTENCIA] El proyecto aún no está registrado en la base de datos")
             return False
 
         delete_sql = """
@@ -219,7 +219,7 @@ class Proyecto:
                 cursor = conn.cursor()
                 cursor.execute(delete_sql, (self.__id_proyecto, id_empleado))
                 if cursor.rowcount == 0:
-                    print("[WARNING] El empleado no está asignado a este proyecto")
+                    print("[ADVERTENCIA] El empleado no está asignado a este proyecto")
                     return False
                 conn.commit()
                 self.__empleados_asignados = [e for e in self.__empleados_asignados if e._id_empleado != id_empleado]
@@ -344,7 +344,7 @@ def buscar_proyecto_por_id(id_proyecto: int):
             conn.close()
 
     if not fila:
-        print("[WARNING] No se encontró un proyecto con ese ID")
+        print("[ADVERTENCIA] No se encontró un proyecto con ese ID")
         return None
 
     return _fila_a_proyecto(fila)
