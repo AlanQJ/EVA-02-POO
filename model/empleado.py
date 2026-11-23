@@ -15,12 +15,7 @@ class Empleado:
         self.__salario_cifrado = self.cifrar_datos_sensibles(float(salario)) # Siempre se convierte a float para que el hash sea consistente
         self.__contrasena_hash = self.cifrar_datos_sensibles(contrasena)
 
-<<<<<<< HEAD
-    # metodos
     def mostrar_datos(self):
-=======
-    def mostrar_datos(self) -> str:
->>>>>>> a53e168a45555dc5adcf4b208289e45d60ff9ece
         return (f"ID: {self._id_empleado} | Nombre: {self._nombre} | Dirección: {self._direccion} | "
                 f"Teléfono: {self._telefono} | Email: {self._email} | "
                 f"Inicio de contrato: {self._fecha_inicio_contrato.strftime('%d-%m-%Y')} | "
@@ -218,8 +213,8 @@ def insertar_datos_empleado(emp: Empleado):
             id_generado = cursor.var(int) # Aquí se recibe el id que genera la bd
             # Los atributos privados se leen con el nombre que Python les asigna (_Empleado__atributo)
             cursor.execute(consulta_insert, (emp._nombre, emp._direccion, emp._telefono, emp._email,
-                                             emp._fecha_inicio_contrato, emp._Empleado__salario_cifrado,
-                                             emp._Empleado__contrasena_hash, emp._id_depto, id_generado))
+                                            emp._fecha_inicio_contrato, emp._Empleado__salario_cifrado,
+                                            emp._Empleado__contrasena_hash, emp._id_depto, id_generado))
             conn.commit()
             emp._id_empleado = id_generado.getvalue()[0]
 
