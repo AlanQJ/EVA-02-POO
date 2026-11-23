@@ -123,7 +123,7 @@ def validar_tabla_administrador():
             id_empleado number primary key,
             nivel_acceso varchar2(20) not null,
             area_rrhh varchar2(100),
-            constraint fk_admin_empleado foreign key (id_empleado) references empleados(id_empleado) on delete cascade,
+            constraint fk_admin_empleado foreign key (id_empleado) references empleados(id_empleado) on delete cascade
         )
     """
     conn = None
@@ -274,7 +274,7 @@ def bd_actualizar_datos_administrador(admin: Administrador) -> bool:
         return False
 
     if nivel_acceso not in PERMISOS_POR_NIVEL:
-        print("[WARNING] El nivel de acceso debe ser 'alto', 'medio' o 'bajo'")
+        print("[ADVERTENCIA] El nivel de acceso debe ser 'alto', 'medio' o 'bajo'")
         return False
 
     consulta_update = "update administradores set nivel_acceso = :1, area_rrhh = :2 where id_empleado = :3"
