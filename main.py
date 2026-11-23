@@ -1,11 +1,31 @@
 from datetime import date
-from model.empleado import Empleado, insertar_datos_empleado, listar_empleados, buscar_empleado_por_id
-from model.administrador import Administrador, insertar_datos_administrador
+from model.empleado import Empleado, insertar_datos_empleado, listar_empleados, buscar_empleado_por_id, validar_tabla_empleado
+from model.administrador import Administrador, insertar_datos_administrador, validar_tabla_administrador
 from model.proyecto import Proyecto
-from servicios_api.api_clima import obtener_clima_proyecto, convertir_divisa_pago
+from servicios_api.apis import obtener_clima_proyecto, convertir_divisa_pago
+from view.menu_principal import menu_principal, menu_usuario
+from model.proyecto import validar_tabla_proyecto
 
-print(obtener_clima_proyecto('Puerto Montt'))
-print(convertir_divisa_pago(1000, 'CLP'))
+def iniciar_sistema():
+    validar_tabla_empleado()
+    validar_tabla_administrador()
+    validar_tabla_proyecto()
+
+    validador = True
+    usuario = None
+    sesion = None
+
+    while validador:
+        if not sesion:
+            validador, usuario, sesion = menu_principal(validador, usuario, sesion)
+        else:
+            usuario, sesion = menu_usuario(usuario, sesion)
+if __name__ == "__main__":
+    iniciar_sistema()
+
+# Prueba de APIs
+# print(obtener_clima_proyecto('Puerto Montt'))
+# print(convertir_divisa_pago(1000, 'CLP'))
 
 # empleado_1 = Empleado('Camila Soto', 'Av. Alemania 450', '987654321', 'camila.soto@ecotech.cl', date(2026, 3, 15), 1250000, 'claveSegura123', 1)
 # insertar_datos_empleado(empleado_1)

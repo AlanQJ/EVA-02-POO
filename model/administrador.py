@@ -22,21 +22,21 @@ class Administrador(Empleado):
             return False
 
         if not isinstance(emp, Empleado):
-            print("[ADVERTENCIA] El dato ingresado no es un empleado")
+            print("[WARNING] El dato ingresado no es un empleado")
             return False
 
         if emp._id_empleado:
-            print("[ADVERTENCIA] El empleado ya está registrado en la base de datos")
+            print("[WARNING] El empleado ya está registrado en la base de datos")
             return False
 
         # Se valida cada dato de texto antes de enviarlo a la bd
         campos = (emp._nombre, emp._direccion, emp._telefono, emp._email)
         if not all(self.validar_entrada_datos(campo) for campo in campos):
-            print("[ADVERTENCIA] Los datos del empleado no son válidos")
+            print("[WARNING] Los datos del empleado no son válidos")
             return False
 
         if "@" not in emp._email:
-            print("[ADVERTENCIA] El email del empleado no es válido")
+            print("[WARNING] El email del empleado no es válido")
             return False
 
         # Si el nuevo empleado también es administrador, hay que guardar además sus datos propios
@@ -48,28 +48,28 @@ class Administrador(Empleado):
     def validar_entrada_datos(self, texto: str) -> bool:
         # La protección real contra inyección sql son los parámetros (:1, :2...), esto es un filtro adicional
         if not isinstance(texto, str) or not texto.strip():
-            print("[ADVERTENCIA] El dato ingresado debe ser un texto no vacío")
+            print("[WARNING] El dato ingresado debe ser un texto no vacío")
             return False
 
         if len(texto) > 200:
-            print("[ADVERTENCIA] El dato ingresado supera los 200 caracteres")
+            print("[WARNING] El dato ingresado supera los 200 caracteres")
             return False
 
         patrones_prohibidos = ["--", ";", "/*", "*/", "<", ">"]
         if any(patron in texto for patron in patrones_prohibidos):
-            print("[ADVERTENCIA] El dato ingresado contiene caracteres no permitidos")
+            print("[WARNING] El dato ingresado contiene caracteres no permitidos")
             return False
 
         # ord(c) < 32 son caracteres de control (saltos de línea, tabulaciones, etc.)
         if any(ord(c) < 32 for c in texto):
-            print("[ADVERTENCIA] El dato ingresado contiene caracteres de control")
+            print("[WARNING] El dato ingresado contiene caracteres de control")
             return False
 
         return True
 
     def verificar_permiso_modulo(self, modulo: str) -> bool:
         if not isinstance(modulo, str) or not modulo.strip():
-            print("[ADVERTENCIA] Debe indicar el módulo a verificar")
+            print("[WARNING] Debe indicar el módulo a verificar")
             return False
 
         permisos = PERMISOS_POR_NIVEL.get(self.__nivel_acceso, set()) # Un nivel desconocido no tiene permisos
@@ -77,7 +77,7 @@ class Administrador(Empleado):
         if modulo.strip().lower() in permisos:
             return True
 
-        print(f"[ADVERTENCIA] El nivel de acceso '{self.__nivel_acceso}' no tiene permiso para el módulo '{modulo}'")
+        print(f"[WARNING] El nivel de acceso '{self.__nivel_acceso}' no tiene permiso para el módulo '{modulo}'")
         return False
 
     def solicitar_reporte(self, tipo: str, formato: str) -> bool:
@@ -88,15 +88,15 @@ class Administrador(Empleado):
             return False
 
         if not isinstance(formato, str) or formato.strip().lower() not in ("pdf", "excel"):
-            print("[ADVERTENCIA] El formato debe ser 'pdf' o 'excel'")
+            print("[WARNING] El formato debe ser 'pdf' o 'excel'")
             return False
 
         formato = formato.strip().lower()
 
         try:
-            from .reporte import Reporte
-        except ImportError:
-            print("[ERROR] La clase Reporte aún no está disponible")
+            from .reporte import Reporte # Se importa aquí para que este archivo funcione aunque Reporte no se pueda cargar
+        except ImportError as e:
+            print(f"[ERROR] No se pudo cargar la clase Reporte (¿faltan openpyxl o reportlab?) | {e}")
             return False
 
         try:
@@ -123,7 +123,8 @@ def validar_tabla_administrador():
             id_empleado number primary key,
             nivel_acceso varchar2(20) not null,
             area_rrhh varchar2(100),
-            constraint fk_admin_empleado foreign key (id_empleado) references empleados(id_empleado) on delete cascade
+            constraint fk_admin_empleado foreign key (id_empleado) references empleados(id_empleado) on delete cascade,
+            constraint ck_admin_nivel check (nivel_acceso in ('alto', 'medio', 'bajo'))
         )
     """
     conn = None
@@ -151,7 +152,7 @@ def insertar_datos_administrador(admin: Administrador) -> bool:
     area_rrhh = admin._Administrador__area_rrhh
 
     if nivel_acceso not in PERMISOS_POR_NIVEL:
-        print("[ADVERTENCIA] El nivel de acceso debe ser 'alto', 'medio' o 'bajo'")
+        print("[WARNING] El nivel de acceso debe ser 'alto', 'medio' o 'bajo'")
         return False
 
     validar_tabla_administrador()
@@ -223,7 +224,7 @@ def buscar_administrador_por_id(id_empleado: int):
             if fila:
                 return _fila_a_administrador(fila)
 
-            print("[ADVERTENCIA] No se encontró un administrador con ese ID")
+            # Sin aviso: que no sea administrador es normal (un empleado común también pasa por aquí al iniciar sesión)
         return None
     except Exception as e:
         print(f"[ERROR] No se pudo buscar el administrador | {e}")
@@ -270,11 +271,11 @@ def bd_actualizar_datos_administrador(admin: Administrador) -> bool:
     area_rrhh = admin._Administrador__area_rrhh
 
     if not admin._id_empleado:
-        print("[ADVERTENCIA] El administrador aún no está registrado en la base de datos")
+        print("[WARNING] El administrador aún no está registrado en la base de datos")
         return False
 
     if nivel_acceso not in PERMISOS_POR_NIVEL:
-        print("[ADVERTENCIA] El nivel de acceso debe ser 'alto', 'medio' o 'bajo'")
+        print("[WARNING] El nivel de acceso debe ser 'alto', 'medio' o 'bajo'")
         return False
 
     consulta_update = "update administradores set nivel_acceso = :1, area_rrhh = :2 where id_empleado = :3"
@@ -288,7 +289,7 @@ def bd_actualizar_datos_administrador(admin: Administrador) -> bool:
             cursor = conn.cursor()
             cursor.execute(consulta_update, (nivel_acceso, area_rrhh, admin._id_empleado))
             if cursor.rowcount == 0:
-                print("[ADVERTENCIA] No se encontró un administrador con ese ID")
+                print("[WARNING] No se encontró un administrador con ese ID")
                 return False
             conn.commit()
 
