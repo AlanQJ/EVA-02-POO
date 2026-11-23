@@ -4,7 +4,6 @@ from datetime import date
 from config.app_config import conectar_db, oracledb
 
 class Empleado:
-    # Atributos
     def __init__(self, nombre: str, direccion: str, telefono: str, email: str, fecha_inicio_contrato: date, salario: float, contrasena: str, id_depto: int, id_empleado: int = None):
         self._id_empleado = id_empleado
         self._nombre = nombre
@@ -16,8 +15,12 @@ class Empleado:
         self.__salario_cifrado = self.cifrar_datos_sensibles(float(salario)) # Siempre se convierte a float para que el hash sea consistente
         self.__contrasena_hash = self.cifrar_datos_sensibles(contrasena)
 
+<<<<<<< HEAD
     # metodos
     def mostrar_datos(self):
+=======
+    def mostrar_datos(self) -> str:
+>>>>>>> a53e168a45555dc5adcf4b208289e45d60ff9ece
         return (f"ID: {self._id_empleado} | Nombre: {self._nombre} | Dirección: {self._direccion} | "
                 f"Teléfono: {self._telefono} | Email: {self._email} | "
                 f"Inicio de contrato: {self._fecha_inicio_contrato.strftime('%d-%m-%Y')} | "
@@ -25,11 +28,11 @@ class Empleado:
 
     def actualizar_salario(self, nuevo_monto: float):
         if not self._id_empleado:
-            print("[WARNING] El empleado aún no está registrado en la base de datos")
+            print("[ADVERTENCIA] El empleado aún no está registrado en la base de datos")
             return False
 
         if not isinstance(nuevo_monto, (int, float)) or isinstance(nuevo_monto, bool) or nuevo_monto <= 0:
-            print("[WARNING] El monto debe ser un número mayor a 0")
+            print("[ADVERTENCIA] El monto debe ser un número mayor a 0")
             return False
 
         update_sql = """
@@ -67,7 +70,7 @@ class Empleado:
 
     def cifrar_datos_sensibles(self, dato: str):
         """Convierte un dato sensible (contraseña o salario) en un hash seguro SHA-256"""
-        return hashlib.sha256(str(dato).encode("utf-8")).hexdigest()
+        return hashlib.sha512(str(dato).encode("utf-8")).hexdigest()
 
     def iniciar_sesion(self, email: str, clave: str):
         if not email or not clave:

@@ -69,5 +69,59 @@
             "monto_original": 100.0,
             "monto_convertido": 101658.96
         }
+    },
+    {
+        "fecha": "23-11-2026 17:57:00",
+        "tipo": "clima",
+        "entrada": {
+            "ciudad": "Valparaiso"
+        },
+        "resultado": {
+            "ciudad": "Valparaíso",
+            "temperatura": 24.04,
+            "humedad": 50,
+            "descripcion": "Algo de nubes"
+        }
+    },
+    {
+        "fecha": "23-11-2026 17:59:27",
+        "tipo": "clima",
+        "entrada": {
+            "ciudad": "Madrid"
+        },
+        "resultado": {
+            "ciudad": "Madrid",
+            "temperatura": 7.84,
+            "humedad": 77,
+            "descripcion": "Cielo claro"
+        }
+    },
+    {
+        "fecha": "23-11-2026 18:02:10",
+        "tipo": "clima",
+        "entrada": {
+            "ciudad": "Puerto Montt"
+        },
+        "resultado": {
+            "ciudad": "Port Montt",
+            "temperatura": 16.46,
+            "humedad": 48,
+            "descripcion": "Muy nuboso"
+        }
+    },
+    {
+        "fecha": "23-11-2026 18:02:27",
+        "tipo": "divisas",
+        "entrada": {
+            "monto_usd": 1000.0,
+            "moneda": "CLP"
+        },
+        "resultado": {
+            "moneda_origen": "USD",
+            "moneda_destino": "CLP",
+            "tasa_cambio": 1016.589577,
+            "monto_original": 1000.0,
+            "monto_convertido": 1016589.58
+        }
     }
 ]
